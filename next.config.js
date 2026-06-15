@@ -12,7 +12,7 @@ const nextConfig = {
     ],
   },
   async rewrites() {
-    const backend = process.env.API_PROXY_URL || 'http://localhost:5000';
+    const backend = process.env.API_PROXY_URL || ' https://your-backend-domain.com';
     return [
       { source: '/api/:path*', destination: `${backend}/api/:path*` },
     ];
