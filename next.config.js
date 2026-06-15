@@ -12,7 +12,7 @@ const nextConfig = {
     ],
   },
   async rewrites() {
-    const backend = process.env.API_PROXY_URL || ' https://your-backend-domain.com';
+    const backend = process.env.API_PROXY_URL || 'https://travel_agency_back.sobhoy.com';
     return [
       { source: '/api/:path*', destination: `${backend}/api/:path*` },
     ];
