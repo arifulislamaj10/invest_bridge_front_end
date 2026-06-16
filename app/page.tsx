@@ -305,7 +305,7 @@ export default function HomePage() {
       <section className="py-16 sm:py-24" id="reviews">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <span className="section-label">Client Satisfaction</span>
+            <span className="section-label">Trusted by Investors &amp; Founders</span>
             <h2 className="section-title mt-4">Real People. Real Results.</h2>
             <p className="section-subtitle mx-auto">Hear from investors and founders who trust InvestBridge.</p>
           </div>

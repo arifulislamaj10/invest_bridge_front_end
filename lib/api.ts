@@ -96,9 +96,104 @@ export interface Project {
 export interface Deal {
   _id: string;
   projectId: Project | string;
+  investorId?: { _id: string; userId?: { fullName: string } };
+  founderId?: { _id: string; businessName?: string; userId?: { fullName: string } };
   offeredAmount: number;
   equityRequested?: number;
   dealStatus: string;
   ndaSigned: boolean;
   createdAt: string;
+}
+
+export interface BusinessReview {
+  _id: string;
+  rating: number;
+  reviewTitle?: string;
+  reviewMessage?: string;
+  investmentAmount?: number;
+  roiStatus?: string;
+  isVerifiedInvestor?: boolean;
+  authorId?: { fullName: string };
+  createdAt: string;
+}
+
+export interface FinancialSnapshot {
+  monthlyRevenue?: number;
+  yearlyRevenue?: number;
+  profitMargin?: number;
+  burnRate?: number;
+  cashFlow?: number;
+  debtRatio?: number;
+  revenueVerified?: boolean;
+  currency?: string;
+}
+
+export interface TeamMember {
+  _id: string;
+  name: string;
+  role: string;
+  experienceYears?: number;
+  bio?: string;
+  linkedin?: string;
+  isVerified?: boolean;
+}
+
+export interface RoiReport {
+  _id: string;
+  expectedROI?: number;
+  achievedROI?: number;
+  periodLabel?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface TrustProfileData {
+  founder: {
+    _id: string;
+    businessName: string;
+    businessType?: string;
+    description?: string;
+    foundedYear?: number;
+    teamSize?: number;
+    userId?: { fullName: string; isVerified: boolean; createdAt?: string };
+  };
+  trustScore: number;
+  trustLabel: string;
+  breakdown: Record<string, number>;
+  weights: Record<string, number>;
+  risk: { level: string; score: number; factors: string[] };
+  badges: Record<string, boolean>;
+  fundingHistory: {
+    totalRaised: number;
+    totalInvestors: number;
+    successfulClosures: number;
+    activeDeals: number;
+    totalProjects: number;
+  };
+  reviewStats: { count: number; average: number };
+  milestoneStats: { total: number; completed: number };
+  fraudHistory: {
+    disputesTotal: number;
+    disputesResolved: number;
+    disputesOpen: number;
+    fraudReports: number;
+  };
+  reviews: BusinessReview[];
+  financials?: FinancialSnapshot | null;
+  team: TeamMember[];
+  roi: RoiReport[];
+  projects: { _id: string; title: string; status: string; fundingGoal: number; totalRaised: number; industry?: string; stage?: string }[];
+  milestones: { _id: string; title: string; status: string; targetDate?: string }[];
+}
+
+export interface SupportTicket {
+  _id: string;
+  subject: string;
+  category: string;
+  priority: string;
+  status: string;
+  messages: { _id?: string; senderId: { fullName?: string; role?: string } | string; senderRole?: string; message: string; createdAt?: string }[];
+  userId?: { fullName: string; email: string; role: string } | string;
+  createdAt: string;
+  updatedAt: string;
 }

@@ -28,6 +28,7 @@ export default function Navbar() {
         { href: '/projects', label: 'Projects' },
         { href: '/deals', label: 'Deals' },
         { href: '/verification', label: 'Verification' },
+        { href: '/support', label: 'Support' },
       ]
     : publicLinks;
 

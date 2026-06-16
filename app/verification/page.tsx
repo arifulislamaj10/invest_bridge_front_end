@@ -17,11 +17,12 @@ interface Verification {
 }
 
 const TYPES = [
-  { value: 'identity', label: 'Identity (ID/Passport)' },
-  { value: 'business', label: 'Business Registration' },
-  { value: 'proof_of_funds', label: 'Proof of Funds' },
-  { value: 'address', label: 'Address Verification' },
-  { value: 'bank', label: 'Bank Account' },
+  { value: 'identity', label: 'Identity (ID/Passport)', roles: ['investor', 'founder'] },
+  { value: 'business', label: 'Business Registration / Tax File', roles: ['founder'] },
+  { value: 'proof_of_funds', label: 'Proof of Funds', roles: ['investor'] },
+  { value: 'address', label: 'Address Verification', roles: ['investor', 'founder'] },
+  { value: 'bank', label: 'Bank Statement', roles: ['investor', 'founder'] },
+  { value: 'revenue', label: 'Revenue / Financial Proof', roles: ['founder'] },
 ];
 
 export default function VerificationPage() {
@@ -61,7 +62,9 @@ export default function VerificationPage() {
   if (loading || !user) return null;
 
   const availableTypes = TYPES.filter(
-    (t) => !verifications.some((v) => v.verificationType === t.value && v.status !== 'rejected')
+    (t) =>
+      t.roles.includes(user.role) &&
+      !verifications.some((v) => v.verificationType === t.value && v.status !== 'rejected')
   );
 
   return (

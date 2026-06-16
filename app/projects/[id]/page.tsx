@@ -8,9 +8,10 @@ import Footer from '@/components/Footer';
 import ImageCarousel from '@/components/ImageCarousel';
 import { api, Project } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { useConfirm } from '@/components/ConfirmDialog';
 import { getProjectImages } from '@/lib/images';
 import { formatCurrency, formatDate, statusColor } from '@/lib/utils';
-import { Shield, MapPin, TrendingUp, Bookmark, Handshake } from 'lucide-react';
+import { Shield, MapPin, TrendingUp, Bookmark, Handshake, Building2, ChevronRight } from 'lucide-react';
 
 interface ProjectDetail {
   project: Project;
@@ -18,17 +19,44 @@ interface ProjectDetail {
   milestones: { _id: string; title: string; status: string; targetDate: string }[];
 }
 
+interface TrustSummary {
+  trustScore: number;
+  trustLabel: string;
+  risk: { level: string };
+  badges: Record<string, boolean>;
+}
+
+function trustColor(score: number) {
+  if (score >= 70) return 'text-emerald-600';
+  if (score >= 50) return 'text-amber-600';
+  return 'text-orange-600';
+}
+
+function riskBadge(level: string) {
+  if (level === 'Low Risk') return 'bg-emerald-50 text-emerald-700';
+  if (level === 'Medium Risk') return 'bg-amber-50 text-amber-700';
+  return 'bg-red-50 text-red-600';
+}
+
 export default function ProjectDetailPage() {
   const { id } = useParams();
   const { user } = useAuth();
+  const confirm = useConfirm();
   const router = useRouter();
   const [data, setData] = useState<ProjectDetail | null>(null);
+  const [trust, setTrust] = useState<TrustSummary | null>(null);
   const [offerAmount, setOfferAmount] = useState('');
   const [showOffer, setShowOffer] = useState(false);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    api.get<ProjectDetail>(`/projects/${id}`).then(setData).catch(() => {});
+    api.get<ProjectDetail>(`/projects/${id}`).then((d) => {
+      setData(d);
+      const founderId = d.project.founderId?._id;
+      if (founderId) {
+        api.get<TrustSummary>(`/trust/score/${founderId}`).then(setTrust).catch(() => {});
+      }
+    }).catch(() => {});
   }, [id]);
 
   const handleExpressInterest = async () => {
@@ -36,6 +64,12 @@ export default function ProjectDetailPage() {
       router.push('/login');
       return;
     }
+    const r = await confirm({
+      title: 'Express investment interest?',
+      message: `This notifies the founder and opens a private deal room${offerAmount ? ` with your offer of $${Number(offerAmount).toLocaleString()}` : ''}.`,
+      confirmLabel: 'Send interest',
+    });
+    if (!r.confirmed) return;
     try {
       const deal = await api.post<{ _id: string }>('/deals', {
         projectId: id,
@@ -106,6 +140,35 @@ export default function ProjectDetailPage() {
       <div className="page-container">
         <div className="grid gap-10 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
+            {/* Founder / Business trust card */}
+            {project.founderId && (
+              <Link
+                href={`/business/${project.founderId._id}`}
+                className="card group flex items-center justify-between transition hover:border-indigo-200 hover:shadow-md"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                    <Building2 className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900">{project.founderId.businessName}</p>
+                    <p className="text-sm text-slate-500">{project.founderId.userId?.fullName}</p>
+                    {trust && (
+                      <div className="mt-1 flex items-center gap-2">
+                        <span className={`text-sm font-bold ${trustColor(trust.trustScore)}`}>
+                          Trust {trust.trustScore}/100
+                        </span>
+                        <span className={`badge ${riskBadge(trust.risk.level)}`}>{trust.risk.level}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <span className="flex items-center gap-1 text-sm font-medium text-indigo-600">
+                  View Trust Profile <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                </span>
+              </Link>
+            )}
+
             <div className="card">
               <h2 className="text-lg font-semibold text-slate-900">About This Project</h2>
               <p className="mt-3 leading-relaxed text-slate-600">{project.description}</p>

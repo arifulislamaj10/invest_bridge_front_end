@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 import { useAuth } from '@/lib/auth';
 import { api, Project, Deal } from '@/lib/api';
 import { formatCurrency, statusColor } from '@/lib/utils';
-import { Plus } from 'lucide-react';
+import { Plus, ShieldCheck } from 'lucide-react';
 
 export default function FounderDashboard() {
   const { user, profile, loading } = useAuth();
@@ -46,6 +46,9 @@ export default function FounderDashboard() {
             {!user.isVerified && (
               <Link href="/verification" className="btn-secondary text-sm">Verify Account</Link>
             )}
+            <Link href="/founder/trust" className="btn-secondary text-sm">
+              <ShieldCheck className="h-4 w-4" /> Trust Profile
+            </Link>
             <Link href="/founder/projects/new" className="btn-primary text-sm">
               <Plus className="h-4 w-4" /> New Project
             </Link>
@@ -91,17 +94,28 @@ export default function FounderDashboard() {
         {deals.length > 0 && (
           <div className="mt-12">
             <h2 className="text-xl font-medium text-neutral-900">Investor Interest</h2>
+            <p className="mt-1 text-sm text-neutral-500">Vet each investor&apos;s credibility before engaging.</p>
             <div className="mt-4 space-y-2">
               {deals.map((deal) => (
-                <Link key={deal._id} href={`/deals/${deal._id}`} className="card-hover flex items-center justify-between !py-4">
+                <div key={deal._id} className="card flex flex-wrap items-center justify-between gap-3 !py-4">
                   <div>
                     <p className="font-medium text-neutral-900">
                       {typeof deal.projectId === 'object' ? deal.projectId.title : 'Project'}
                     </p>
-                    <p className="text-sm text-neutral-500">Offer: {formatCurrency(deal.offeredAmount)}</p>
+                    <p className="text-sm text-neutral-500">
+                      {deal.investorId?.userId?.fullName || 'Investor'} · Offer: {formatCurrency(deal.offeredAmount)}
+                    </p>
                   </div>
-                  <span className={`badge ${statusColor(deal.dealStatus)}`}>{deal.dealStatus}</span>
-                </Link>
+                  <div className="flex items-center gap-2">
+                    <span className={`badge ${statusColor(deal.dealStatus)}`}>{deal.dealStatus}</span>
+                    {deal.investorId?._id && (
+                      <Link href={`/investors/${deal.investorId._id}`} className="btn-secondary !px-3 !py-1.5 text-xs">
+                        <ShieldCheck className="h-3.5 w-3.5" /> Vet Investor
+                      </Link>
+                    )}
+                    <Link href={`/deals/${deal._id}`} className="btn-primary !px-3 !py-1.5 text-xs">Open Deal</Link>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
