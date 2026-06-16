@@ -130,6 +130,19 @@ export default function BusinessProfilePage() {
           </div>
         )}
 
+        {/* Non-investors: make the rule explicit instead of hiding silently */}
+        {user && user.role !== 'investor' && (
+          <div className="mb-6 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
+            <ShieldCheck className="h-4 w-4 text-slate-400" /> Only investors can review a business.
+          </div>
+        )}
+        {!user && (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-indigo-100 bg-indigo-50/60 px-4 py-3 text-sm text-slate-600">
+            <span>Want to review this business? Sign in as an investor.</span>
+            <Link href="/login" className="font-medium text-indigo-600 hover:underline">Sign in</Link>
+          </div>
+        )}
+
         {/* Open projects */}
         {data.projects.length > 0 && (
           <div className="card mb-6">

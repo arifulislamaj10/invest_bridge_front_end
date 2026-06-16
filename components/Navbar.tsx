@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
-import { LogOut, Menu, X, Bell, User, Shield } from 'lucide-react';
+import { LogOut, Menu, X, Bell, Shield } from 'lucide-react';
 import { useState } from 'react';
 
 const publicLinks = [
@@ -72,10 +72,15 @@ export default function Navbar() {
                 <Link href="/notifications" className="rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-indigo-600">
                   <Bell className="h-5 w-5" />
                 </Link>
-                <span className="flex items-center gap-1.5 text-sm font-medium text-slate-600">
-                  <User className="h-4 w-4" />
+                <Link href="/account" className="flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-indigo-600" title="My Account">
+                  {user.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={user.avatarUrl} alt="" className="h-7 w-7 rounded-full object-cover" />
+                  ) : (
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">{user.fullName.charAt(0)}</span>
+                  )}
                   <span className="max-w-[120px] truncate">{user.fullName}</span>
-                </span>
+                </Link>
                 <button onClick={logout} className="rounded-full p-2 text-slate-500 hover:bg-red-50 hover:text-red-500" title="Logout">
                   <LogOut className="h-5 w-5" />
                 </button>
@@ -115,7 +120,10 @@ export default function Navbar() {
             ))}
             <div className="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">
               {user ? (
-                <button onClick={logout} className="text-left text-sm text-red-500">Logout</button>
+                <>
+                  <Link href="/account" className="block rounded-lg px-3 py-3 text-sm font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600" onClick={() => setMobileOpen(false)}>My Account</Link>
+                  <button onClick={logout} className="text-left text-sm text-red-500">Logout</button>
+                </>
               ) : (
                 <>
                   <Link href="/login" className="btn-secondary w-full text-center text-sm" onClick={() => setMobileOpen(false)}>Sign In</Link>

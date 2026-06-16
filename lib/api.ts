@@ -69,6 +69,8 @@ export interface User {
   role: 'investor' | 'founder' | 'admin';
   accountStatus: string;
   isVerified: boolean;
+  avatarUrl?: string;
+  phone?: string;
 }
 
 export interface Project {
@@ -184,6 +186,17 @@ export interface TrustProfileData {
   roi: RoiReport[];
   projects: { _id: string; title: string; status: string; fundingGoal: number; totalRaised: number; industry?: string; stage?: string }[];
   milestones: { _id: string; title: string; status: string; targetDate?: string }[];
+}
+
+export interface PlatformReview {
+  _id: string;
+  rating: number;
+  headline?: string;
+  message: string;
+  role?: string;
+  status?: string;
+  userId?: { fullName: string; role?: string; email?: string } | string;
+  createdAt: string;
 }
 
 export interface SupportTicket {

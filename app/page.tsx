@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ProjectCard from '@/components/ProjectCard';
 import HeroBackground from '@/components/HeroBackground';
-import { api, Project } from '@/lib/api';
+import { api, Project, PlatformReview } from '@/lib/api';
 import { testimonialAvatars } from '@/lib/images';
 import {
   ArrowRight, Check, Shield, Lock, Users, TrendingUp,
@@ -16,10 +16,14 @@ import {
 
 export default function HomePage() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [platformReviews, setPlatformReviews] = useState<PlatformReview[]>([]);
 
   useEffect(() => {
     api.get<Project[]>('/projects?status=active').then(setProjects).catch(() => {});
+    api.get<PlatformReview[]>('/platform-reviews?limit=6').then(setPlatformReviews).catch(() => {});
   }, []);
+
+  const roleLabel = (r?: string) => (r === 'founder' ? 'Founder' : r === 'investor' ? 'Investor' : 'Member');
 
   const stats = [
     { value: '27+', label: 'Active Projects' },
@@ -83,6 +87,16 @@ export default function HomePage() {
     { name: 'Priya Sharma', role: 'Angel Investor', location: 'Mumbai', rating: 5, text: 'The project filtering is excellent. I found 4 agritech startups in Bangladesh that matched my investment thesis perfectly.' },
     { name: 'Michael Tan', role: 'Corporate Investor', location: 'Singapore', rating: 5, text: 'We closed a $200K deal through InvestBridge deal room. The NDA workflow and document vault saved us weeks of legal back-and-forth.' },
   ];
+
+  // Prefer real user testimonials; fall back to the curated defaults when none exist yet.
+  const realTestimonials = platformReviews.map((r) => ({
+    name: typeof r.userId === 'object' && r.userId ? r.userId.fullName : 'InvestBridge Member',
+    role: roleLabel(typeof r.userId === 'object' && r.userId ? r.userId.role : r.role),
+    location: '',
+    rating: r.rating,
+    text: r.message,
+  }));
+  const displayTestimonials = realTestimonials.length ? realTestimonials : testimonials;
 
 
   return (
@@ -310,8 +324,8 @@ export default function HomePage() {
             <p className="section-subtitle mx-auto">Hear from investors and founders who trust InvestBridge.</p>
           </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((t, idx) => (
-              <div key={t.name} className="card-hover">
+            {displayTestimonials.map((t, idx) => (
+              <div key={`${t.name}-${idx}`} className="card-hover">
                 <div className="flex">
                   {Array.from({ length: t.rating }).map((_, i) => (
                     <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
@@ -329,7 +343,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-900">{t.name}</p>
-                    <p className="text-xs text-slate-500">{t.role} · {t.location}</p>
+                    <p className="text-xs text-slate-500">{t.role}{t.location ? ` · ${t.location}` : ''}</p>
                   </div>
                   <span className="ml-auto badge bg-emerald-50 text-emerald-700">Verified</span>
                 </div>
