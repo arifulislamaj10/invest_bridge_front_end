@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 import { useAuth } from '@/lib/auth';
 import { api, Project, Deal } from '@/lib/api';
 import { formatCurrency, statusColor } from '@/lib/utils';
-import { Plus, ShieldCheck } from 'lucide-react';
+import { Plus, ShieldCheck, Star } from 'lucide-react';
 
 export default function FounderDashboard() {
   const { user, profile, loading } = useAuth();
@@ -48,6 +48,9 @@ export default function FounderDashboard() {
             )}
             <Link href="/founder/trust" className="btn-secondary text-sm">
               <ShieldCheck className="h-4 w-4" /> Trust Profile
+            </Link>
+            <Link href="/founder/spotlight" className="btn-secondary text-sm">
+              <Star className="h-4 w-4" /> Featured Spotlight
             </Link>
             <Link href="/founder/projects/new" className="btn-primary text-sm">
               <Plus className="h-4 w-4" /> New Project

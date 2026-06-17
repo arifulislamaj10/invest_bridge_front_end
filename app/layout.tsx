@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
+import './globals.css';
 import { AuthProvider } from '@/lib/auth';
 import { ConfirmProvider } from '@/components/ConfirmDialog';
-import './globals.css';
 
 export const metadata: Metadata = {
   title: 'InvestBridge - Global Investment Marketplace',

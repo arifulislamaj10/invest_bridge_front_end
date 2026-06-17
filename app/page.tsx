@@ -6,7 +6,9 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ProjectCard from '@/components/ProjectCard';
 import HeroBackground from '@/components/HeroBackground';
-import { api, Project, PlatformReview } from '@/lib/api';
+import FeaturedFounderSpotlight from '@/components/FeaturedFounderSpotlight';
+import { api, Project, PlatformReview, PlatformStats } from '@/lib/api';
+import { formatCurrency } from '@/lib/utils';
 import { testimonialAvatars } from '@/lib/images';
 import {
   ArrowRight, Check, Shield, Lock, Users, TrendingUp,
@@ -17,19 +19,22 @@ import {
 export default function HomePage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [platformReviews, setPlatformReviews] = useState<PlatformReview[]>([]);
+  const [stats, setStats] = useState<PlatformStats | null>(null);
 
   useEffect(() => {
     api.get<Project[]>('/projects?status=active').then(setProjects).catch(() => {});
     api.get<PlatformReview[]>('/platform-reviews?limit=6').then(setPlatformReviews).catch(() => {});
+    api.get<PlatformStats>('/stats').then(setStats).catch(() => {});
   }, []);
 
   const roleLabel = (r?: string) => (r === 'founder' ? 'Founder' : r === 'investor' ? 'Investor' : 'Member');
 
-  const stats = [
-    { value: '27+', label: 'Active Projects' },
-    { value: '$12M+', label: 'Total Funding Raised' },
-    { value: '500+', label: 'Verified Investors' },
-    { value: '4.9★', label: 'Platform Rating' },
+  // Real numbers from the backend when available; otherwise the curated fallbacks.
+  const heroStats = [
+    { value: stats?.activeProjects ? `${stats.activeProjects}` : '27+', label: 'Active Projects' },
+    { value: stats?.totalRaised ? formatCurrency(stats.totalRaised) : '$12M+', label: 'Total Funding Raised' },
+    { value: stats?.verifiedInvestors ? `${stats.verifiedInvestors}` : '500+', label: 'Verified Investors' },
+    { value: stats?.avgRating ? `${stats.avgRating}★` : '4.9★', label: 'Platform Rating' },
   ];
 
   const partners = ['Dhaka Angels', 'Startup Bangladesh', 'BASIS', 'iDEA Project', 'BGMEA', 'FinTech Alliance'];
@@ -104,16 +109,16 @@ export default function HomePage() {
       <Navbar />
 
       {/* ─── HERO ─── */}
-      <section className="relative flex min-h-[88vh] items-center overflow-hidden">
+      <section className="relative flex min-h-[80vh] items-center overflow-hidden sm:min-h-[88vh]">
         <HeroBackground />
 
-        <div className="relative mx-auto w-full max-w-7xl px-4 py-24 sm:px-6 sm:py-28 lg:px-8">
+        <div className="relative mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-28 lg:px-8">
           <div className="max-w-3xl">
-            <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-300 backdrop-blur-sm">
+            <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-amber-300 backdrop-blur-sm sm:text-xs">
               Global Investment Marketplace
             </span>
 
-            <h1 className="mt-8 text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl">
+            <h1 className="mt-6 text-3xl font-extrabold leading-[1.1] tracking-tight text-white sm:mt-8 sm:text-5xl lg:text-6xl xl:text-7xl">
               Invest in{' '}
               <span className="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">
                 Verified
@@ -121,11 +126,11 @@ export default function HomePage() {
               {' '}Startups with Confidence
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-200 sm:text-xl">
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-200 sm:mt-6 sm:text-xl">
               Discover hand-picked opportunities, connect with serious investors, and close deals in a secure, verified environment.
             </p>
 
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:gap-4">
               <Link href="/register?role=investor" className="btn-accent">
                 Start Investing Free <ArrowRight className="h-4 w-4" />
               </Link>
@@ -137,8 +142,8 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <div className="mt-14 grid grid-cols-2 gap-6 border-t border-white/10 pt-10 sm:grid-cols-4">
-              {stats.map((s) => (
+            <div className="mt-10 grid grid-cols-2 gap-5 border-t border-white/10 pt-8 sm:mt-14 sm:gap-6 sm:pt-10 sm:grid-cols-4">
+              {heroStats.map((s) => (
                 <div key={s.label}>
                   <p className="text-2xl font-bold text-white sm:text-3xl">{s.value}</p>
                   <p className="mt-1 text-xs font-medium text-slate-300 sm:text-sm">{s.label}</p>
@@ -171,7 +176,7 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
           {[
             { value: '$300B+', label: 'Global Startup Market', icon: Globe },
-            { value: '150+', label: 'Deals in Progress', icon: Handshake },
+            { value: stats?.dealsInProgress ? `${stats.dealsInProgress}` : '150+', label: 'Deals in Progress', icon: Handshake },
             { value: '100%', label: 'Verified Listings', icon: Award },
             { value: '24hr', label: 'KYC Turnaround', icon: BadgeCheck },
           ].map((s) => (
@@ -262,6 +267,9 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ─── FEATURED FOUNDER SPOTLIGHT ─── */}
+      <FeaturedFounderSpotlight />
+
       {/* ─── FEATURED PROJECTS ─── */}
       <section className="py-16 sm:py-24" id="projects">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -331,7 +339,8 @@ export default function HomePage() {
                     <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-                <p className="mt-4 text-sm leading-relaxed text-slate-600">&ldquo;{t.text}&rdquo;</p>
+                
+                <p className="mt-4 line-clamp-4 break-words text-sm leading-relaxed text-slate-600">&ldquo;{t.text}&rdquo;</p>
                 <div className="mt-6 flex items-center gap-3 border-t border-slate-100 pt-4">
                   <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full bg-slate-200">
                     {/* eslint-disable-next-line @next/next/no-img-element */}

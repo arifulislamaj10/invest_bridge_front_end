@@ -188,6 +188,69 @@ export interface TrustProfileData {
   milestones: { _id: string; title: string; status: string; targetDate?: string }[];
 }
 
+export interface PlatformStats {
+  activeProjects: number;
+  totalProjects: number;
+  totalRaised: number;
+  verifiedInvestors: number;
+  totalInvestors: number;
+  dealsInProgress: number;
+  completedDeals: number;
+  avgRating: number | null;
+  reviewCount: number;
+}
+
+export interface FounderProfileFull {
+  _id: string;
+  businessName: string;
+  businessType?: string;
+  valuation?: number;
+  annualRevenue?: number;
+  fundingRaised?: number;
+  description?: string;
+  teamSize?: number;
+  foundedYear?: number;
+  location?: string;
+  videoUrl?: string;
+  gallery?: string[];
+  proofBadges?: string[];
+  isFeatured?: boolean;
+  verifiedBadges?: string[];
+  userId?: { _id: string; fullName: string; email?: string; isVerified?: boolean };
+}
+
+export interface Verification {
+  _id: string;
+  verificationType: 'identity' | 'business' | 'proof_of_funds' | 'address' | 'bank' | 'revenue';
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+}
+
+export interface FeaturedFounder {
+  founder: {
+    _id: string;
+    businessName: string;
+    businessType?: string;
+    description?: string;
+    foundedYear?: number;
+    teamSize?: number;
+    valuation?: number;
+    annualRevenue?: number;
+    fundingRaised?: number;
+    location?: string;
+    videoUrl?: string;
+    proofBadges?: string[];
+    gallery?: string[];
+    fullName?: string;
+    isVerified?: boolean;
+    avatarUrl?: string;
+    memberSince?: string;
+  };
+  projects: { _id: string; title: string; industry?: string; fundingGoal: number; totalRaised: number; stage?: string }[];
+  totalRaised: number;
+  featuredProjectId: string | null;
+}
+
 export interface PlatformReview {
   _id: string;
   rating: number;

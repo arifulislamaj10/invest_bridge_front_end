@@ -59,10 +59,14 @@ export function getProjectImages(project: Pick<Project, 'coverImage' | 'images' 
   return industryImages[project.industry] || industryImages.other;
 }
 
+// Hero slideshow — an on-theme narrative for investors: workspace → founders →
+// real business → growth → deal-making. Slow cross-fade in HeroBackground.
 export const heroImages = [
-  'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1920&q=80',
-  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80',
-  'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1920&q=80',
+  'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1920&q=80', // modern office
+  'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&q=80', // founders / team meeting
+  'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1920&q=80', // real business / on-site
+  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80', // finance / growth
+  'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1920&q=80', // strategy / deal-making
 ];
 
 export const testimonialAvatars = [
