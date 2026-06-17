@@ -151,10 +151,10 @@ export default function FeaturedFounderSpotlight() {
           </p>
         </div>
 
-        <div className="mt-12 grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
+        <div className="mt-10 grid items-start gap-8 sm:mt-12 lg:grid-cols-2 lg:gap-12">
           {/* ─── MEDIA: gallery + video ─── */}
           <div>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-slate-100 shadow-lg shadow-slate-200/60">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-100 shadow-lg shadow-slate-200/60 sm:rounded-3xl">
               {showVideo && embed ? (
                 embed.type === 'iframe' ? (
                   <iframe
@@ -217,8 +217,8 @@ export default function FeaturedFounderSpotlight() {
 
           {/* ─── DETAILS ─── */}
           <div>
-            <div className="flex items-center gap-3">
-              <h3 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{f.businessName}</h3>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <h3 className="text-xl font-extrabold text-slate-900 sm:text-2xl lg:text-3xl">{f.businessName}</h3>
               {f.isVerified && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
                   <BadgeCheck className="h-4 w-4" /> Verified
@@ -272,10 +272,10 @@ export default function FeaturedFounderSpotlight() {
             )}
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href={investHref} className="btn-primary">
+              <Link href={investHref} className="btn-primary w-full sm:w-auto">
                 Invest in this Business <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link href="/register?role=investor" className="btn-secondary">
+              <Link href="/register?role=investor" className="btn-secondary w-full sm:w-auto">
                 Become a Verified Investor
               </Link>
             </div>
